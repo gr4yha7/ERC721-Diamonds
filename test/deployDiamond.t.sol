@@ -5,7 +5,8 @@ import "../contracts/interfaces/IDiamondCut.sol";
 import "../contracts/facets/DiamondCutFacet.sol";
 import "../contracts/facets/DiamondLoupeFacet.sol";
 import "../contracts/facets/OwnershipFacet.sol";
-import "../../lib/forge-std/src/Test.sol";
+import {ERC721} from "../contracts/facets/ERC721Facet.sol";
+import "../lib/forge-std/src/Test.sol";
 import "../contracts/Diamond.sol";
 
 contract DiamondDeployer is Test, IDiamondCut {
@@ -14,18 +15,22 @@ contract DiamondDeployer is Test, IDiamondCut {
     DiamondCutFacet dCutFacet;
     DiamondLoupeFacet dLoupe;
     OwnershipFacet ownerF;
+    ERC721 erc721Facet;
+    string tokenName = "Plastic";
+    string tokenSymbol = "PLAS";
 
     function testDeployDiamond() public {
         //deploy facets
         dCutFacet = new DiamondCutFacet();
-        diamond = new Diamond(address(this), address(dCutFacet));
+        diamond = new Diamond(address(this), address(dCutFacet), tokenName, tokenSymbol);
         dLoupe = new DiamondLoupeFacet();
         ownerF = new OwnershipFacet();
+        erc721Facet = new ERC721();
 
         //upgrade diamond with facets
 
         //build cut struct
-        FacetCut[] memory cut = new FacetCut[](2);
+        FacetCut[] memory cut = new FacetCut[](3);
 
         cut[0] = (
             FacetCut({
@@ -43,11 +48,22 @@ contract DiamondDeployer is Test, IDiamondCut {
             })
         );
 
+        cut[2] = (
+            FacetCut({
+                facetAddress: address(erc721Facet),
+                action: FacetCutAction.Add,
+                functionSelectors: generateSelectors("ERC721")
+            })
+        );
+
         //upgrade diamond
         IDiamondCut(address(diamond)).diamondCut(cut, address(0x0), "");
 
         //call a function
         DiamondLoupeFacet(address(diamond)).facetAddresses();
+        // get token name
+        ERC721(address(diamond)).name();
+
     }
 
     function generateSelectors(string memory _facetName)
