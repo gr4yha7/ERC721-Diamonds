@@ -3,7 +3,6 @@
 
 pragma solidity ^0.8.0;
 
-import "../ERC165.sol";
 import "../interfaces/IERC721.sol";
 import "../interfaces/IERC721Receiver.sol";
 import "../libraries/Address.sol";
@@ -15,7 +14,7 @@ import {AppStorage} from "../libraries/LibAppStorage.sol";
  * the Metadata extension, but not including the Enumerable extension, which is available separately as
  * {ERC721Enumerable}.
  */
-contract ERC721 is ERC165, IERC721 {
+contract ERC721 is IERC721 {
     using Address for address;
     using Strings for uint256;
     AppStorage internal s;
@@ -23,11 +22,11 @@ contract ERC721 is ERC165, IERC721 {
     /**
      * @dev See {IERC165-supportsInterface}.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
-        return
-            interfaceId == type(IERC721).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
+    // function supportsInterface(bytes4 interfaceId) public view virtual override(ERC165, IERC165) returns (bool) {
+    //     return
+    //         interfaceId == type(IERC721).interfaceId ||
+    //         super.supportsInterface(interfaceId);
+    // }
 
     /**
      * @dev See {IERC721-balanceOf}.
