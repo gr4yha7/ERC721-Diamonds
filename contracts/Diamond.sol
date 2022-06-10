@@ -9,10 +9,12 @@ pragma solidity ^0.8.0;
 /******************************************************************************/
 
 import {LibDiamond} from "./libraries/LibDiamond.sol";
+import {AppStorage} from "./libraries/LibAppStorage.sol";
 import {IDiamondCut} from "./interfaces/IDiamondCut.sol";
 
 contract Diamond {
-    constructor(address _contractOwner, address _diamondCutFacet) payable {
+    AppStorage internal s;
+    constructor(address _contractOwner, address _diamondCutFacet, string memory name_, string memory symbol_) payable {
         LibDiamond.setContractOwner(_contractOwner);
 
         // Add the diamondCut external function from the diamondCutFacet
@@ -25,6 +27,8 @@ contract Diamond {
             functionSelectors: functionSelectors
         });
         LibDiamond.diamondCut(cut, address(0), "");
+        s._name = name_;
+        s._symbol = symbol_;
     }
 
     // Find facet for function that is called and execute the
