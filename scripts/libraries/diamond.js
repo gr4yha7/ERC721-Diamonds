@@ -67,6 +67,11 @@ function removeSelectors(selectors, signatures) {
 
 // find a particular address position in the return value of diamondLoupeFacet.facets()
 function findAddressPositionInFacets(facetAddress, facets) {
+  // facets.reduce((_, cur, index) => {
+  //   if (cur.facetAddress === facetAddress) {
+  //     return index;
+  //   }
+  // }, 0);
   for (let i = 0; i < facets.length; i++) {
     if (facets[i].facetAddress === facetAddress) {
       return i
